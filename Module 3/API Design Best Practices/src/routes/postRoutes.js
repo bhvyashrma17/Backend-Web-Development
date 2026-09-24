@@ -3,9 +3,9 @@ const controller = require('../controllers/postController');
 
 const router = express.Router();
 
-router.get('/getPosts', controller.listPosts);
-router.get('/getPost/:id', controller.getPost);
-router.post('/createPost', controller.createPost);
-router.post('/likePost/:id', controller.likePost);
+router.get('/posts', controller.list);
+router.get('/posts/:id', controller.getOne);
+router.post('/posts', controller.create);
+router.post('/posts/:id/likes', controller.like);
 
 module.exports = router;
