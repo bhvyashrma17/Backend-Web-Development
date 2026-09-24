@@ -1,41 +1,35 @@
 const service = require('../services/postService');
 const http = require('../utils/http');
+const asyncHandler = require('../utils/asyncHandler');
 
-function listPosts(req, res) {
-  const rows = service.listPosts(req.query);
-  return http.sendList(res, rows);
-}
+const list = asyncHandler(async (req, res) => {
+  const { data, meta } = service.listPosts(req.query);
+  return http.sendSuccess(res, 200, data, meta);
+});
 
-function getPost(req, res) {
+const getOne = asyncHandler(async (req, res) => {
   const post = service.getPost(req.params.id);
-  if (!post) {
-    return http.sendError(res, 404, { message: 'post missing' });
-  }
-  return http.sendOk(res, post);
-}
+  return http.sendSuccess(res, 200, post);
+});
 
-function createPost(req, res) {
+const create = asyncHandler(async (req, res) => {
   const post = service.createPost(req.body);
-  return http.sendCreated(res, post);
-}
+  return http.sendSuccess(res, 201, post);
+});
 
-function likePost(req, res) {
+const like = asyncHandler(async (req, res) => {
   const post = service.likePost(req.params.id);
-  return http.sendOk(res, { ok: true, likes: post.likes });
-}
+  return http.sendSuccess(res, 200, post);
+});
 
-function explode(req, res) {
-  try {
-    service.explode();
-  } catch (err) {
-    return http.sendError(res, 500, { error: err.message, stack: err.debug || err.stack });
-  }
-}
+const triggerFailure = asyncHandler(async () => {
+  service.triggerInternalFailure();
+});
 
 module.exports = {
-  listPosts,
-  getPost,
-  createPost,
-  likePost,
-  explode
+  list,
+  getOne,
+  create,
+  like,
+  triggerFailure
 };
